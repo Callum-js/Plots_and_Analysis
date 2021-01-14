@@ -16,17 +16,21 @@ import matplotlib.pyplot as plt
 
 """Read a file where I have corrected country names in order to match the 
 names in the geopandas world dataset. This allows the datasets to be merged
-for plotting"""
+for plotting."""
+
 df = pd.read_csv("lifeExpectancyAtBirth2.csv")
+
 #drop the original file country names and select desired data
 df.drop(["Location"], axis = 1, inplace = True)
 df_19 = df[(df["Period"]==2019) & (df["Dim1"]=="Both sexes")]
 
 #Set index to country name
 df_19.set_index("name", inplace = True)
+
 #Read in geopandas world dataframe and select populated countries/territories
 world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 world = world[(world.pop_est>0) & (world.name!="Antarctica")]
+
 #Merge the world and life exp. dataframes on country
 world = world.merge(df_19["First Tooltip"], how = "left", left_on = "name", right_index=True)
 
